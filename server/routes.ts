@@ -53,23 +53,7 @@ function analyzeRequest(requestText: string): { summary: string, details: string
   return { summary, details };
 }
 
-// Calculate distance between two coordinates (Haversine formula)
-function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 6371; // Radius of the earth in km
-  const dLat = deg2rad(lat2 - lat1);
-  const dLon = deg2rad(lon2 - lon1);
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2); 
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-  const distance = R * c; // Distance in km
-  return distance * 0.621371; // Convert to miles
-}
 
-function deg2rad(deg: number): number {
-  return deg * (Math.PI/180);
-}
 
 
 
@@ -540,7 +524,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       fullName: "Maria Lopez",
       isOnline: true,
       rating: 4.9,
-      distance: 1.8,
+      distance: Math.random() * 5,
       hourlyRate: 45,
       bio: "10+ years working in senior care, experienced in dementia and palliative care.",
       isVerified: true,
@@ -555,7 +539,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       fullName: "Emily Chen",
       isOnline: true,
       rating: 4.7,
-      distance: 2.3,
+      distance: Math.random() * 5,
       hourlyRate: 40,
       bio: "6+ years in disability support, assisting clients with mobility challenges and daily routines.",
       isVerified: true,
@@ -570,7 +554,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       fullName: "David Wilson",
       isOnline: true,
       rating: 4.6,
-      distance: 3.1,
+      distance: Math.random() * 5,
       hourlyRate: 35,
       bio: "4+ years providing in-home personal care, including meal prep and light housekeeping.",
       isVerified: true,
@@ -585,7 +569,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       fullName: "Anna Nguyen",
       isOnline: true,
       rating: 4.8,
-      distance: 2.7,
+      distance: Math.random() * 5,
       hourlyRate: 42,
       bio: "8+ years in palliative care, offering emotional and physical support for elderly patients.",
       isVerified: true,
@@ -600,7 +584,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       fullName: "James Patel",
       isOnline: true,
       rating: 4.7,
-      distance: 1.5,
+      distance: Math.random() * 5,
       hourlyRate: 38,
       bio: "5+ years in home nursing, assisting with medication management and light therapy.",
       isVerified: true,
