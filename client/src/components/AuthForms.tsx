@@ -43,52 +43,26 @@ const registerSchema = z
   });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
-type RegisterFormValues = z.infer<typeof registerSchema>;
+type EmailFormValues = {
+  email: string;
+};
 
 export function AuthForms() {
-  const { loginMutation, registerMutation } = useAuth();
-  const [activeTab, setActiveTab] = useState<"login" | "register" | "guest">(
-    "login",
-  );
   const [, navigate] = useLocation();
+  const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
 
-  const handleGuestLogin = () => {
-    navigate("/guest");
-  };
-
-  // Login form
-  const loginForm = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+  const emailForm = useForm<EmailFormValues>({
     defaultValues: {
-      username: "",
-      password: "",
-    },
-  });
-
-  function onLoginSubmit(values: LoginFormValues) {
-    loginMutation.mutate(values);
-  }
-
-  // Register form
-  const registerForm = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-      confirmPassword: "",
       email: "",
-      phoneNumber: "",
-      fullName: "",
     },
   });
 
-  function onRegisterSubmit(values: RegisterFormValues) {
-    // Add CARE_SEEKER as default userType when registering
-    // The user can change this later in the UserTypePage
-    registerMutation.mutate({
-      ...values,
-      userType: "CARE_SEEKER",
-    });
+  async function onEmailSubmit(values: EmailFormValues) {
+    // Store email in localStorage
+    localStorage.setItem('userEmail', values.email);
+    setSubmittedEmail(values.email);
+    // Navigate to care request page
+    navigate("/care-request");
   }
 
   return (
