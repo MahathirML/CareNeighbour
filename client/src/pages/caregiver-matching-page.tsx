@@ -22,7 +22,7 @@ export default function CaregiverMatchingPage() {
   const requestId = params.get('requestId');
   
   // Filter states
-  const [activeFilters, setActiveFilters] = useState<string[]>(["available-now"]);
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
   
   // Fetch caregivers
   const { data: caregivers, isLoading: caregiversLoading, error } = useQuery({

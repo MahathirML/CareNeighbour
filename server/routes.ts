@@ -342,49 +342,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: 'Authentication required' });
       }
 
-      // Get all available providers
-      const providerStatuses = await storage.getAllAvailableProviders();
-
-      // Get provider user details
-      const providers = await Promise.all(
-        providerStatuses.map(async (status) => {
-          const user = await storage.getUser(status.userId);
-          if (!user) return null;
-
-          // Don't return password
-          const { password, ...providerInfo } = user;
-
-          // If location params are provided, calculate distance
-          let distance = null;
-          if (req.query.latitude && req.query.longitude && status.latitude && status.longitude) {
-            const lat = parseFloat(req.query.latitude as string);
-            const lon = parseFloat(req.query.longitude as string);
-            if (!isNaN(lat) && !isNaN(lon)) {
-              distance = calculateDistance(lat, lon, status.latitude, status.longitude);
-            }
-          }
-
-          return {
-            ...providerInfo,
-            isOnline: status.isOnline,
-            latitude: status.latitude,
-            longitude: status.longitude,
-            distance
-          };
-        })
-      );
-
-      // Filter out nulls and sort by distance if available
-      const validProviders = providers.filter(p => p !== null);
-      if (req.query.latitude && req.query.longitude) {
-        validProviders.sort((a, b) => {
-          if (a!.distance === null) return 1;
-          if (b!.distance === null) return -1;
-          return a!.distance! - b!.distance!;
-        });
-      }
-
-      res.json(validProviders);
+      // Return mock providers directly
+      res.json(mockProviders);
     } catch (error) {
       res.status(500).json({ message: 'Error retrieving providers', error });
     }
