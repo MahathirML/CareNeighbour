@@ -545,7 +545,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       bio: "10+ years working in senior care, experienced in dementia and palliative care.",
       isVerified: true,
       skills: ["Dementia Care", "Medical"],
-      profileImageUrl: "/avatars/image1.jpg"
+      profileImageUrl: "/public/avatars/image1.jpg",
+      latitude: 40.7128,
+      longitude: -74.0060
     },
     {
       id: 2,
@@ -558,20 +560,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       bio: "6+ years in disability support, assisting clients with mobility challenges and daily routines.",
       isVerified: true,
       skills: ["Mobility Support", "Companionship"],
-      profileImageUrl: "/avatars/image17.jpg"
+      profileImageUrl: "/public/avatars/image17.jpg",
+      latitude: 40.7135,
+      longitude: -74.0066
     },
     {
       id: 3,
       username: "david_wilson",
       fullName: "David Wilson",
-      isOnline: false,
+      isOnline: true,
       rating: 4.6,
       distance: 3.1,
       hourlyRate: 35,
       bio: "4+ years providing in-home personal care, including meal prep and light housekeeping.",
       isVerified: true,
       skills: ["Household Help", "Companionship"],
-      profileImageUrl: "/avatars/image5.jpg"
+      profileImageUrl: "/public/avatars/image5.jpg",
+      latitude: 40.7142,
+      longitude: -74.0072
     },
     {
       id: 4,
@@ -584,7 +590,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       bio: "8+ years in palliative care, offering emotional and physical support for elderly patients.",
       isVerified: true,
       skills: ["Medical", "Mobility"],
-      profileImageUrl: "/avatars/image4.jpg"
+      profileImageUrl: "/public/avatars/image4.jpg",
+      latitude: 40.7120,
+      longitude: -74.0055
     },
     {
       id: 5,
@@ -597,7 +605,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       bio: "5+ years in home nursing, assisting with medication management and light therapy.",
       isVerified: true,
       skills: ["Household Help", "Medical"],
-      profileImageUrl: "/avatars/image13.jpg"
+      profileImageUrl: "/public/avatars/image13.jpg",
+      latitude: 40.7115,
+      longitude: -74.0050
     }
   ];
 
