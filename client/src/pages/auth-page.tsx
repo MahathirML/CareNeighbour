@@ -14,7 +14,7 @@ export default function AuthPage() {
     if (!isLoading && user) {
       navigate(
         user.userType === "CARE_SEEKER"
-          ? "/care-request"
+          ? "/support-recipient"
           : "/caregiver-dashboard",
       );
     }

@@ -16,6 +16,9 @@ import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import SupportRecipientPage from "@/pages/support-recipient-page";
+import AgeVerificationPage from "@/pages/age-verification-page";
+import SuburbSelectionPage from "@/pages/suburb-selection-page";
 
 function Router() {
   return (
@@ -24,6 +27,9 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <Route path="/guest" component={CareRequestPage} />
       <ProtectedRoute path="/user-type" component={UserTypePage} />
+      <ProtectedRoute path="/support-recipient" component={SupportRecipientPage} />
+      <ProtectedRoute path="/age-verification" component={AgeVerificationPage} />
+      <ProtectedRoute path="/suburb-selection" component={SuburbSelectionPage} />
       <ProtectedRoute path="/care-request" component={CareRequestPage} />
       <ProtectedRoute path="/ai-summary" component={AISummaryPage} />
       <ProtectedRoute path="/caregiver-matching" component={CaregiverMatchingPage} />
@@ -46,7 +52,7 @@ function App() {
       setIsLoading(false);
       console.log("App loaded");
     }, 1000);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
