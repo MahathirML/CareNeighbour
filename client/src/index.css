@@ -1,0 +1,103 @@
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slide-up {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.5s ease-out;
+  }
+
+  .loading-skeleton {
+    @apply animate-pulse bg-neutral-200 rounded;
+  }
+
+  /* Improved default styles */
+  h1 {
+    @apply text-4xl font-bold tracking-tight;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+
+  /* Custom animations */
+  .fade-in {
+    @apply opacity-0 animate-[fade-in_0.5s_ease-out_forwards];
+  }
+
+  .slide-up {
+    @apply translate-y-4 opacity-0 animate-[slide-up_0.5s_ease-out_forwards];
+  }
+
+  @keyframes fade-in {
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-up {
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* Card styles */
+  .card {
+    @apply rounded-lg border bg-card p-6 shadow-sm transition-all hover:shadow-md;
+  }
+
+  /* Button improvements */
+  .button {
+    @apply rounded-md px-4 py-2 font-medium transition-colors;
+  }
+
+  .button-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+  }
+
+  /* Input styles */
+  input, textarea, select {
+    @apply rounded-md border border-input bg-background px-3 py-2 text-sm 
+           ring-offset-background placeholder:text-muted-foreground 
+           focus:outline-none focus:ring-2 focus:ring-ring;
+  }
+}
