@@ -15,7 +15,7 @@ export default function CaregiverMatchingPage() {
   const { toast } = useToast();
   
   // Get location
-  const { latitude, longitude, loading: locationLoading } = useGeolocation();
+  // const { latitude, longitude, loading: locationLoading } = useGeolocation();
   
   // Extract requestId from URL params
   const params = new URLSearchParams(location.split('?')[1] || '');
