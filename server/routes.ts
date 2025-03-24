@@ -53,23 +53,7 @@ function analyzeRequest(requestText: string): { summary: string, details: string
   return { summary, details };
 }
 
-// Calculate distance between two coordinates (Haversine formula)
-function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 6371; // Radius of the earth in km
-  const dLat = deg2rad(lat2 - lat1);
-  const dLon = deg2rad(lon2 - lon1);
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2); 
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-  const distance = R * c; // Distance in km
-  return distance * 0.621371; // Convert to miles
-}
 
-function deg2rad(deg: number): number {
-  return deg * (Math.PI/180);
-}
 
 
 
@@ -358,49 +342,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: 'Authentication required' });
       }
 
-      // Get all available providers
-      const providerStatuses = await storage.getAllAvailableProviders();
-
-      // Get provider user details
-      const providers = await Promise.all(
-        providerStatuses.map(async (status) => {
-          const user = await storage.getUser(status.userId);
-          if (!user) return null;
-
-          // Don't return password
-          const { password, ...providerInfo } = user;
-
-          // If location params are provided, calculate distance
-          let distance = null;
-          if (req.query.latitude && req.query.longitude && status.latitude && status.longitude) {
-            const lat = parseFloat(req.query.latitude as string);
-            const lon = parseFloat(req.query.longitude as string);
-            if (!isNaN(lat) && !isNaN(lon)) {
-              distance = calculateDistance(lat, lon, status.latitude, status.longitude);
-            }
-          }
-
-          return {
-            ...providerInfo,
-            isOnline: status.isOnline,
-            latitude: status.latitude,
-            longitude: status.longitude,
-            distance
-          };
-        })
-      );
-
-      // Filter out nulls and sort by distance if available
-      const validProviders = providers.filter(p => p !== null);
-      if (req.query.latitude && req.query.longitude) {
-        validProviders.sort((a, b) => {
-          if (a!.distance === null) return 1;
-          if (b!.distance === null) return -1;
-          return a!.distance! - b!.distance!;
-        });
-      }
-
-      res.json(validProviders);
+      // Return 5 random mock providers
+      const shuffled = mockProviders.sort(() => 0.5 - Math.random());
+      res.json(shuffled.slice(0, 5));
     } catch (error) {
       res.status(500).json({ message: 'Error retrieving providers', error });
     }
@@ -536,80 +480,319 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const mockProviders = [
     {
       id: 1,
-      username: "maria_lopez",
-      fullName: "Maria Lopez",
+      username: "sarah_thompson",
+      fullName: "Sarah Thompson",
       isOnline: true,
-      rating: 4.9,
-      distance: 1.8,
-      hourlyRate: 45,
-      bio: "10+ years working in senior care, experienced in dementia and palliative care.",
+      rating: 4.8,
+      distance: Math.random() * 5,
+      hourlyRate: 38,
+      bio: "7+ years in aged care, specializing in personal support for seniors with mild cognitive impairments.",
       isVerified: true,
-      skills: ["Dementia Care", "Medical"],
-      profileImageUrl: "/public/avatars/image1.jpg",
-      latitude: 40.7128,
-      longitude: -74.0060
+      skills: ["Companionship", "Household Help"],
+      profileImageUrl: "/public/avatars/image18.jpg",
+      latitude: 40.7109,
+      longitude: -74.0055
     },
     {
       id: 2,
+      username: "michael_reed",
+      fullName: "Michael Reed",
+      isOnline: true,
+      rating: 4.5,
+      distance: Math.random() * 5,
+      hourlyRate: 38,
+      bio: "5+ years as a registered nurse, focusing on post-surgery recovery and mobility training.",
+      isVerified: true,
+      skills: ["Medical", "Mobility Support"],
+      profileImageUrl: "/public/avatars/image21.jpg",
+      latitude: 40.7117,
+      longitude: -74.0072
+    },
+    {
+      id: 3,
       username: "emily_chen",
       fullName: "Emily Chen",
       isOnline: true,
       rating: 4.7,
-      distance: 2.3,
-      hourlyRate: 40,
+      distance: Math.random() * 5,
+      hourlyRate: 38,
       bio: "6+ years in disability support, assisting clients with mobility challenges and daily routines.",
       isVerified: true,
       skills: ["Mobility Support", "Companionship"],
       profileImageUrl: "/public/avatars/image17.jpg",
-      latitude: 40.7135,
-      longitude: -74.0066
+      latitude: 40.7103,
+      longitude: -74.0041
     },
     {
-      id: 3,
+      id: 4,
       username: "david_wilson",
       fullName: "David Wilson",
       isOnline: true,
-      rating: 4.6,
-      distance: 3.1,
-      hourlyRate: 35,
+      rating: 4.9,
+      distance: Math.random() * 5,
+      hourlyRate: 40,
       bio: "4+ years providing in-home personal care, including meal prep and light housekeeping.",
       isVerified: true,
       skills: ["Household Help", "Companionship"],
       profileImageUrl: "/public/avatars/image5.jpg",
-      latitude: 40.7142,
-      longitude: -74.0072
+      latitude: 40.7105,
+      longitude: -74.0064
     },
     {
-      id: 4,
+      id: 5,
+      username: "maria_lopez",
+      fullName: "Maria Lopez",
+      isOnline: true,
+      rating: 4.7,
+      distance: Math.random() * 5,
+      hourlyRate: 35,
+      bio: "10+ years working in senior care, experienced in dementia and palliative care.",
+      isVerified: true,
+      skills: ["Dementia Care", "Medical"],
+      profileImageUrl: "/public/avatars/image1.jpg",
+      latitude: 40.7147,
+      longitude: -74.003
+    },
+    {
+      id: 6,
+      username: "john_carter",
+      fullName: "John Carter",
+      isOnline: true,
+      rating: 4.9,
+      distance: Math.random() * 5,
+      hourlyRate: 42,
+      bio: "3+ years in aged care, helping with daily activities and companionship.",
+      isVerified: true,
+      skills: ["Mobility Support", "Companionship"],
+      profileImageUrl: "/public/avatars/image9.jpg",
+      latitude: 40.7115,
+      longitude: -74.0075
+    },
+    {
+      id: 7,
       username: "anna_nguyen",
       fullName: "Anna Nguyen",
       isOnline: true,
-      rating: 4.8,
-      distance: 2.7,
-      hourlyRate: 42,
+      rating: 4.6,
+      distance: Math.random() * 5,
+      hourlyRate: 45,
       bio: "8+ years in palliative care, offering emotional and physical support for elderly patients.",
       isVerified: true,
       skills: ["Medical", "Mobility"],
       profileImageUrl: "/public/avatars/image4.jpg",
-      latitude: 40.7120,
-      longitude: -74.0055
+      latitude: 40.7133,
+      longitude: -74.0052
     },
     {
-      id: 5,
+      id: 8,
       username: "james_patel",
       fullName: "James Patel",
       isOnline: true,
       rating: 4.7,
-      distance: 1.5,
+      distance: Math.random() * 5,
       hourlyRate: 38,
       bio: "5+ years in home nursing, assisting with medication management and light therapy.",
       isVerified: true,
       skills: ["Household Help", "Medical"],
       profileImageUrl: "/public/avatars/image13.jpg",
-      latitude: 40.7115,
-      longitude: -74.0050
+      latitude: 40.7124,
+      longitude: -74.0048
+    },
+    {
+      id: 9,
+      username: "olivia_brown",
+      fullName: "Olivia Brown",
+      isOnline: true,
+      rating: 4.6,
+      distance: Math.random() * 5,
+      hourlyRate: 42,
+      bio: "6+ years as a dementia care specialist, supporting seniors with memory impairments.",
+      isVerified: true,
+      skills: ["Dementia", "Companionship"],
+      profileImageUrl: "/public/avatars/image14.jpg",
+      latitude: 40.7111,
+      longitude: -74.0069
+    },
+    {
+      id: 10,
+      username: "ethan_scott",
+      fullName: "Ethan Scott",
+      isOnline: true,
+      rating: 4.8,
+      distance: Math.random() * 5,
+      hourlyRate: 40,
+      bio: "4+ years in hospital care, specializing in wound care and mobility rehabilitation.",
+      isVerified: true,
+      skills: ["Medical", "Mobility Support"],
+      profileImageUrl: "/public/avatars/image7.jpg",
+      latitude: 40.7139,
+      longitude: -74.0045
+    },
+    {
+      id: 11,
+      username: "lucy_walker",
+      fullName: "Lucy Walker",
+      isOnline: true,
+      rating: 4.9,
+      distance: Math.random() * 5,
+      hourlyRate: 35,
+      bio: "7+ years in aged care, assisting seniors with errands and social engagement.",
+      isVerified: true,
+      skills: ["Household Help", "Mobility"],
+      profileImageUrl: "/public/avatars/image20.jpg",
+      latitude: 40.7123,
+      longitude: -74.0039
+    },
+    {
+      id: 12,
+      username: "kevin_adams",
+      fullName: "Kevin Adams",
+      isOnline: true,
+      rating: 4.7,
+      distance: Math.random() * 5,
+      hourlyRate: 45,
+      bio: "9+ years in disability care, providing mobility assistance and therapy support.",
+      isVerified: true,
+      skills: ["Medical", "Mobility", "Household Help"],
+      profileImageUrl: "/public/avatars/image16.jpg",
+      latitude: 40.7145,
+      longitude: -74.0044
+    },
+    {
+      id: 13,
+      username: "sophia_lee",
+      fullName: "Sophia Lee",
+      isOnline: true,
+      rating: 4.6,
+      distance: Math.random() * 5,
+      hourlyRate: 38,
+      bio: "5+ years in community care, focused on social connection and home maintenance.",
+      isVerified: true,
+      skills: ["Companionship", "Household Help"],
+      profileImageUrl: "/public/avatars/image2.jpg",
+      latitude: 40.7121,
+      longitude: -74.0033
+    },
+    {
+      id: 14,
+      username: "daniel_baker",
+      fullName: "Daniel Baker",
+      isOnline: true,
+      rating: 4.7,
+      distance: Math.random() * 5,
+      hourlyRate: 40,
+      bio: "6+ years in respite care, offering short-term support for caregivers and families.",
+      isVerified: true,
+      skills: ["Dementia", "Medical"],
+      profileImageUrl: "/public/avatars/image6.jpg",
+      latitude: 40.7108,
+      longitude: -74.0068
+    },
+    {
+      id: 15,
+      username: "emma_white",
+      fullName: "Emma White",
+      isOnline: true,
+      rating: 4.9,
+      distance: Math.random() * 5,
+      hourlyRate: 42,
+      bio: "3+ years assisting seniors with personal care and home organization.",
+      isVerified: true,
+      skills: ["Household Help", "Mobility"],
+      profileImageUrl: "/public/avatars/image19.jpg",
+      latitude: 40.7131,
+      longitude: -74.0042
+    }  {
+      id: 16,
+      username: "benjamin_hall",
+      fullName: "Benjamin Hall",
+      isOnline: true,
+      rating: 4.8,
+      distance: Math.random() * 5,
+      hourlyRate: 35,
+      bio: "8+ years in aged care, specializing in mental well-being for the elderly.",
+      isVerified: true,
+      skills: ["Companionship", "Dementia"],
+      profileImageUrl: "/public/avatars/image10.jpg",
+      latitude: 40.7116,
+      longitude: -74.0057
+    },
+    {
+      id: 17,
+      username: "chloe_martin",
+      fullName: "Chloe Martin",
+      isOnline: true,
+      rating: 4.7,
+      distance: Math.random() * 5,
+      hourlyRate: 38,
+      bio: "7+ years in personal support, helping seniors maintain independence at home.",
+      isVerified: true,
+      skills: ["Household Help", "Mobility"],
+      profileImageUrl: "/public/avatars/image12.jpg",
+      latitude: 40.7125,
+      longitude: -74.0036
+    },
+    {
+      id: 18,
+      username: "liam_harris",
+      fullName: "Liam Harris",
+      isOnline: true,
+      rating: 4.6,
+      distance: Math.random() * 5,
+      hourlyRate: 45,
+      bio: "4+ years as a geriatric nurse, handling complex medical needs and rehabilitation.",
+      isVerified: true,
+      skills: ["Medical", "Mobility", "Dementia"],
+      profileImageUrl: "/public/avatars/image11.jpg",
+      latitude: 40.7137,
+      longitude: -74.0051
+    },
+    {
+      id: 19,
+      username: "zoe_robinson",
+      fullName: "Zoe Robinson",
+      isOnline: true,
+      rating: 4.8,
+      distance: Math.random() * 5,
+      hourlyRate: 40,
+      bio: "4+ years in community support, providing companionship and daily assistance.",
+      isVerified: true,
+      skills: ["Companionship", "Household Help"],
+      profileImageUrl: "/public/avatars/image8.jpg",
+      latitude: 40.7104,
+      longitude: -74.0062
+    },
+    {
+      id: 20,
+      username: "noah_evans",
+      fullName: "Noah Evans",
+      isOnline: true,
+      rating: 4.7,
+      distance: Math.random() * 5,
+      hourlyRate: 38,
+      bio: "6+ years in senior home care, with expertise in fall prevention and medication reminders.",
+      isVerified: true,
+      skills: ["Medical", "Mobility"],
+      profileImageUrl: "/public/avatars/image3.jpg",
+      latitude: 40.7132,
+      longitude: -74.0071
+    },
+    {
+      id: 21,
+      username: "noah_campbell",
+      fullName: "Noah Campbell",
+      isOnline: true,
+      rating: 4.9,
+      distance: Math.random() * 5,
+      hourlyRate: 42,
+      bio: "6+ years as a home nurse, specializing in post-hospitalization recovery.",
+      isVerified: true,
+      skills: ["Medical", "Mobility Support"],
+      profileImageUrl: "/public/avatars/image15.jpg",
+      latitude: 40.7126,
+      longitude: -74.0038
     }
-  ];
+    ];
 
 
   return httpServer;
