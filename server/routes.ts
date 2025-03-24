@@ -63,19 +63,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Test endpoint - can be removed later
   app.get('/api/test', (req, res) => {
-    if (req.isAuthenticated()) {
       res.json({ 
         message: 'You are authenticated', 
         user: req.user,
         session: req.session
       });
-    } else {
-      res.status(401).json({ 
-        message: 'Not authenticated',
-        sessionID: req.sessionID,
-        cookies: req.headers.cookie
-      });
-    }
   });
 
   // Testing endpoint to create a test user - remove in production
@@ -190,32 +182,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Care request endpoints
   app.post('/api/care-requests', async (req: Request, res: Response) => {
     try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: 'Authentication required' });
-      }
-
       // Validate request body
       const validationResult = insertCareRequestSchema.safeParse(req.body);
       if (!validationResult.success) {
         return res.status(400).json({ errors: validationResult.error.errors });
       }
-
-      // Set the authenticated user as the seeker
+  
+      // If no user is authenticated, fall back to the test user
+      let userId = req.user?.id;
+  
+      if (!userId) {
+        const guestUser = await storage.getUserByUsername('testuser');
+        if (!guestUser) {
+          return res.status(403).json({ message: 'Guest/test user not available. Please create the test user first.' });
+        }
+        userId = guestUser.id;
+      }
+  
+      // Set the authenticated user (or test user) as the seeker
       const requestData = {
         ...validationResult.data,
-        userSeekerId: req.user.id
+        userSeekerId: userId
       };
-
+  
       // Analyze the request text
       const analysis = analyzeRequest(requestData.requestDescription);
-
+  
       // Create the care request
       const careRequest = await storage.createCareRequest({
         ...requestData,
         requestSummary: analysis.summary,
         requestDetails: JSON.stringify(analysis.details)
       });
-
+  
       res.status(201).json(careRequest);
     } catch (error) {
       res.status(500).json({ message: 'Error creating care request', error });
@@ -224,9 +223,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/care-requests/:id', async (req: Request, res: Response) => {
     try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: 'Authentication required' });
-      }
 
       const requestId = parseInt(req.params.id);
       if (isNaN(requestId)) {
@@ -246,7 +242,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: 'Not authorized to view this request' });
       }
 
-      res.json(careRequest);
+      res.json(careRequest); 
     } catch (error) {
       res.status(500).json({ message: 'Error retrieving care request', error });
     }
@@ -254,9 +250,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/care-requests', async (req: Request, res: Response) => {
     try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: 'Authentication required' });
-      }
 
       let careRequests: CareRequest[] = [];
 
@@ -275,9 +268,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch('/api/care-requests/:id', async (req: Request, res: Response) => {
     try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: 'Authentication required' });
-      }
 
       const requestId = parseInt(req.params.id);
       if (isNaN(requestId)) {
@@ -338,11 +328,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Provider endpoints
   app.get('/api/providers', async (req: Request, res: Response) => {
     try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: 'Authentication required' });
-      }
 
-      // Return 5 random mock providers
+      // Return exactly 5 random caregivers from the mock list
       const shuffled = mockProviders.sort(() => 0.5 - Math.random());
       res.json(shuffled.slice(0, 5));
     } catch (error) {
@@ -352,9 +339,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/provider-status', async (req: Request, res: Response) => {
     try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: 'Authentication required' });
-      }
+
 
       // Ensure user is a care provider
       if (req.user.userType !== 'CARE_PROVIDER') {
@@ -377,9 +362,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Match caregiver with a request
   app.post('/api/care-requests/:id/match', async (req: Request, res: Response) => {
     try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: 'Authentication required' });
-      }
 
       const requestId = parseInt(req.params.id);
       if (isNaN(requestId)) {
@@ -432,9 +414,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Provider accept/decline request
   app.post('/api/care-requests/:id/respond', async (req: Request, res: Response) => {
     try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: 'Authentication required' });
-      }
+
 
       const requestId = parseInt(req.params.id);
       if (isNaN(requestId)) {
@@ -702,7 +682,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       profileImageUrl: "/public/avatars/image19.jpg",
       latitude: 40.7131,
       longitude: -74.0042
-    }  {
+    }  ,{
       id: 16,
       username: "benjamin_hall",
       fullName: "Benjamin Hall",
