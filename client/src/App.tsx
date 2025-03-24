@@ -46,7 +46,7 @@ function App() {
       setIsLoading(false);
       console.log("App loaded");
     }, 1000);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
