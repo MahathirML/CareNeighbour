@@ -60,7 +60,7 @@ export default function CareRequestPage() {
         title: "Request Created",
         description: "Care request submitted successfully",
       });
-      navigate(`/ai-summary?requestId=${data.id}`);
+      navigate(`/caregiver-matching?requestId=${data.id}`);
     },
     onError: (error) => {
       console.error("Care request error:", error);

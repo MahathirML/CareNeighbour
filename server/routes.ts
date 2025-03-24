@@ -533,5 +533,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  const mockProviders = [
+    {
+      id: 1,
+      username: "maria_lopez",
+      fullName: "Maria Lopez",
+      isOnline: true,
+      rating: 4.9,
+      distance: 1.8,
+      hourlyRate: 45,
+      bio: "10+ years working in senior care, experienced in dementia and palliative care.",
+      isVerified: true,
+      skills: ["Dementia Care", "Medical"],
+      profileImageUrl: "/avatars/image1.jpg"
+    },
+    {
+      id: 2,
+      username: "emily_chen",
+      fullName: "Emily Chen",
+      isOnline: true,
+      rating: 4.7,
+      distance: 2.3,
+      hourlyRate: 40,
+      bio: "6+ years in disability support, assisting clients with mobility challenges and daily routines.",
+      isVerified: true,
+      skills: ["Mobility Support", "Companionship"],
+      profileImageUrl: "/avatars/image17.jpg"
+    },
+    {
+      id: 3,
+      username: "david_wilson",
+      fullName: "David Wilson",
+      isOnline: false,
+      rating: 4.6,
+      distance: 3.1,
+      hourlyRate: 35,
+      bio: "4+ years providing in-home personal care, including meal prep and light housekeeping.",
+      isVerified: true,
+      skills: ["Household Help", "Companionship"],
+      profileImageUrl: "/avatars/image5.jpg"
+    },
+    {
+      id: 4,
+      username: "anna_nguyen",
+      fullName: "Anna Nguyen",
+      isOnline: true,
+      rating: 4.8,
+      distance: 2.7,
+      hourlyRate: 42,
+      bio: "8+ years in palliative care, offering emotional and physical support for elderly patients.",
+      isVerified: true,
+      skills: ["Medical", "Mobility"],
+      profileImageUrl: "/avatars/image4.jpg"
+    },
+    {
+      id: 5,
+      username: "james_patel",
+      fullName: "James Patel",
+      isOnline: true,
+      rating: 4.7,
+      distance: 1.5,
+      hourlyRate: 38,
+      bio: "5+ years in home nursing, assisting with medication management and light therapy.",
+      isVerified: true,
+      skills: ["Household Help", "Medical"],
+      profileImageUrl: "/avatars/image13.jpg"
+    }
+  ];
+
+
   return httpServer;
 }
